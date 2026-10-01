@@ -24,7 +24,8 @@
           "resizeMode": "contain",
           "imageWidth": 180
         }
-      ]
+      ],
+      "expo-sharing"
     ]
   }
 }

@@ -7,9 +7,8 @@ import { LifePlanApp } from './src/LifePlanApp';
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  // Plan 002 will hide the splash only after the saved state has loaded.
   return (
-    <SafeAreaProvider onLayout={() => SplashScreen.hideAsync()}>
+    <SafeAreaProvider>
       <StatusBar style="dark" />
       <LifePlanApp />
     </SafeAreaProvider>

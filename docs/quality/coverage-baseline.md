@@ -1,6 +1,6 @@
 # Coverage Baseline
 
-2026-10-01 (plan 001): `src/lib/` at 100% statements, 100% branches, 100% functions, 100% lines (`greeting.ts`, 9 tests).
+2026-10-01 (plan 002): `src/lib/` at 99.15% statements, 99.13% branches, 100% functions, 100% lines (53 tests).
 
 ## Command
 
