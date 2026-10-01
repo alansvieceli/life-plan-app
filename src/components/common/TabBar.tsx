@@ -1,11 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
-
-type IconName = ComponentProps<typeof Ionicons>['name'];
+import type { IconName } from './IconName';
 
 export type TabItem<T extends string> = {
   id: T;

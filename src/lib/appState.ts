@@ -1,4 +1,4 @@
-type House = { id: string; name: string };
+export type House = { id: string; name: string };
 
 type Routine = {
   id: string;
