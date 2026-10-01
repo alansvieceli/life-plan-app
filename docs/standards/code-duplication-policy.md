@@ -24,4 +24,4 @@ npx jscpd src --min-tokens 50 --threshold 5
 
 ## Current Baseline
 
-2026-10-01 (plan 003): 0 clones, 0% duplicated lines (29 files, 1890 lines in `src/`).
+2026-10-01 (plan 004): 0 clones, 0% duplicated lines (50 files, 3276 lines in `src/`).

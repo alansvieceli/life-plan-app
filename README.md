@@ -4,14 +4,13 @@ Personal Android app (React Native, Expo, TypeScript) to organize the week and k
 
 ## Current status
 
-Implemented:
+All planned features from `docs/specs/001-life-plan-app.md` are implemented:
 
 - Themed app shell (paper tones, sage green, serif titles) with header, time-based greeting and three tabs: `Semana`, `Compras`, `Manutenção`.
 - App icon and native splash screen (kept until saved data is loaded).
+- `Semana`: browse weeks, see each day's activities (weekly routines and one-off activities sorted by start time, overlaps flagged), add, edit and delete activities.
 - `Compras`: shopping items per house, filter by house, mark as bought, delete and clear bought items.
 - `Manutenção`: manage houses (free list, at least one), back up, restore and reset local data.
-
-Planned (see `docs/specs/001-life-plan-app.md`): weekly planner with recurring and one-off activities. `Semana` is a placeholder until that plan is executed.
 
 ## Requirements
 

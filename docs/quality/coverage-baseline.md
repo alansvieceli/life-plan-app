@@ -1,6 +1,6 @@
 # Coverage Baseline
 
-2026-10-01 (plan 003): `src/lib/` at 99.29% statements, 99.2% branches, 100% functions, 100% lines (62 tests).
+2026-10-01 (plan 004): `src/lib/` at 99.55% statements, 98.81% branches, 100% functions, 100% lines (111 tests).
 
 ## Command
 
