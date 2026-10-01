@@ -1,6 +1,6 @@
-export type House = { id: string; name: string };
+type House = { id: string; name: string };
 
-export type Routine = {
+type Routine = {
   id: string;
   title: string;
   weekdays: number[];
@@ -8,7 +8,7 @@ export type Routine = {
   durationMin: number;
 };
 
-export type OneOff = {
+type OneOff = {
   id: string;
   title: string;
   date: string;
@@ -16,7 +16,7 @@ export type OneOff = {
   durationMin: number;
 };
 
-export type ShoppingItem = {
+type ShoppingItem = {
   id: string;
   name: string;
   houseId: string;
