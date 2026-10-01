@@ -22,7 +22,7 @@
 - `src/lib/` coverage above 80%; duplication at or below 5% (`npx jscpd src --min-tokens 50 --threshold 5`).
 - Follow `docs/standards/react-native-standards.md` (structure, reuse, accessibility, theme tokens, no `any`).
 - Quality gate for closing the spec work of this plan: `npm run check`.
-- Commits: only when the user asks for them. This repo has no commits yet. Steps marked "Commit" are skipped unless requested.
+- Commits: the user approved committing. Messages follow the Husky `commit-msg` hook: `type: message` with type in feat, fix, docs, test, build, perf, style, refactor, chore, ci, raw, cleanup, remove. After `npm install` the `.husky` hooks are active (`pre-commit` runs lint-staged).
 
 ## Review Focus
 
@@ -38,7 +38,7 @@
 
 **Files:**
 - Create: `package.json`, `index.ts`, `App.tsx`, `app.json`, `jest.config.js`
-- Existing, keep untouched: `biome.json`, `knip.json`, `tsconfig.json`, `.editorconfig`, `.gitignore`
+- Existing, keep untouched: `biome.json`, `knip.json`, `tsconfig.json`, `.editorconfig`, `.gitignore`, `.husky/`
 
 **Interfaces:**
 - Produces: npm scripts `lint`, `format`, `format:check`, `typecheck`, `test`, `test:coverage`, `biome:ci`, `knip`, `knip:production`, `check`, `dup`, `start`, `android`.
@@ -67,7 +67,11 @@
     "biome:ci": "biome ci . --error-on-warnings",
     "knip": "knip --treat-config-hints-as-errors",
     "knip:production": "knip --production --strict --treat-config-hints-as-errors",
-    "check": "npm run biome:ci && npm run typecheck && npm run test:coverage && npm run knip && npm run knip:production"
+    "check": "npm run biome:ci && npm run typecheck && npm run test:coverage && npm run knip && npm run knip:production",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,jsonc}": "biome check --write --no-errors-on-unmatched"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
@@ -81,9 +85,11 @@
     "@biomejs/biome": "^2.5.3",
     "@types/jest": "29.5.14",
     "@types/react": "~19.2.2",
+    "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-expo": "~56.0.5",
     "knip": "^6.26.0",
+    "lint-staged": "^17.0.7",
     "typescript": "~6.0.3"
   }
 }
@@ -148,7 +154,7 @@ module.exports = {
 Run: `npm install`
 Run: `npx expo install react-native-safe-area-context`
 Run: `npx expo install --check`
-Expected: install succeeds; the check reports dependencies are up to date (accept its fixes if it proposes any).
+Expected: install succeeds and the `prepare` script activates Husky (`git config core.hooksPath` prints `.husky/_`); the check reports dependencies are up to date (accept its fixes if it proposes any).
 
 - [ ] **Step 4: Verify the toolchain**
 
@@ -775,7 +781,7 @@ Expected: all pass; duplication at or below 5%; `src/lib/` coverage above 80%.
 
 - [ ] **Step 5: Summarize**
 
-Report: files changed, validation executed (including the manual emulator check from Task 4), pending items (`husky`/commit hooks and the cycle12 Android centered-splash plugin were intentionally not copied; add only if needed).
+Report: files changed, validation executed (including the manual emulator check from Task 4), pending items (the cycle12 Android centered-splash plugin was intentionally not copied; add only if needed).
 
 - [ ] **Step 6: Commit (only if requested)**
 
