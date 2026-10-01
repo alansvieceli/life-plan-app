@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Life Plan",
+    "slug": "life-plan-app",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "android": {
+      "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "resize",
+      "package": "br.com.lifeplan.app"
+    }
+  }
+}
