@@ -11,4 +11,6 @@ export const colors = {
   negative: '#C0705F',
   warning: '#D9A66B',
   info: '#6F93A8',
+  mauve: '#B98BA8',
+  overlay: 'rgba(59, 58, 54, 0.4)',
 };

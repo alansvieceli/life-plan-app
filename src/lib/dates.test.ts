@@ -5,6 +5,7 @@ import {
   startOfWeek,
   toDateKey,
   weekdayLetter,
+  weekdayName,
   weekNumber,
 } from './dates';
 
@@ -64,5 +65,12 @@ describe('formatDayTitle', () => {
 describe('weekdayLetter', () => {
   it('returns D S T Q Q S S', () => {
     expect([0, 1, 2, 3, 4, 5, 6].map(weekdayLetter).join('')).toBe('DSTQQSS');
+  });
+});
+
+describe('weekdayName', () => {
+  it('returns the Portuguese name of the weekday', () => {
+    expect(weekdayName(0)).toBe('Domingo');
+    expect(weekdayName(6)).toBe('Sábado');
   });
 });

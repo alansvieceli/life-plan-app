@@ -56,6 +56,10 @@ export function formatDayTitle(date: Date) {
   return `${WEEKDAY_NAMES[date.getDay()]}, ${date.getDate()} ${MONTH_NAMES[date.getMonth()]}`;
 }
 
+export function weekdayName(day: number) {
+  return WEEKDAY_NAMES[day];
+}
+
 export function weekdayLetter(day: number) {
   return WEEKDAY_LETTERS[day];
 }

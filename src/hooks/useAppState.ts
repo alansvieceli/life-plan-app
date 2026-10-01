@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useRef, useState } from 'react';
-
+import { type ActivityDraft, removeActivity, upsertActivity } from '../lib/activities';
 import { type AppState, createDefaultState, parseStoredState } from '../lib/appState';
 import {
   addHouse,
@@ -60,6 +60,10 @@ export function useAppState() {
     toggleShoppingItem: (id: string) => update(toggleBought(state, id)),
     deleteShoppingItem: (id: string) => update(deleteItem(state, id)),
     clearBoughtItems: () => update(clearBought(state)),
+    saveActivity: (id: string | null, draft: ActivityDraft) =>
+      update(upsertActivity(state, id ?? createId(draft.kind), draft)),
+    deleteActivity: (kind: 'routine' | 'oneoff', id: string) =>
+      update(removeActivity(state, kind, id)),
     replaceState: update,
     resetState: () => update(createDefaultState()),
   };

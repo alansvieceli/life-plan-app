@@ -7,6 +7,7 @@ import { AppHeader } from './components/common/AppHeader';
 import { TabBar, type TabItem } from './components/common/TabBar';
 import { MaintenanceScreen } from './components/maintenance/MaintenanceScreen';
 import { ShoppingScreen } from './components/shopping/ShoppingScreen';
+import { WeekScreen } from './components/week/WeekScreen';
 import { useAppState } from './hooks/useAppState';
 import { colors } from './theme/colors';
 import { typography } from './theme/typography';
@@ -31,8 +32,6 @@ export function LifePlanApp() {
 
   if (!isLoaded) return null;
 
-  const activeLabel = tabs.find((tab) => tab.id === activeTab)?.label;
-
   return (
     <View
       style={[
@@ -43,9 +42,7 @@ export function LifePlanApp() {
       <AppHeader />
       {store.saveError ? <Text style={styles.error}>{store.saveError}</Text> : null}
       <View style={styles.content}>
-        {activeTab === 'week' ? (
-          <Text style={styles.sectionTitle}>{activeLabel}</Text>
-        ) : null}
+        {activeTab === 'week' ? <WeekScreen store={store} /> : null}
         {activeTab === 'shopping' ? <ShoppingScreen store={store} /> : null}
         {activeTab === 'maintenance' ? <MaintenanceScreen store={store} /> : null}
       </View>
@@ -62,10 +59,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
-  },
-  sectionTitle: {
-    color: colors.textSecondary,
-    ...typography.sectionTitle,
   },
   error: {
     color: colors.negative,
