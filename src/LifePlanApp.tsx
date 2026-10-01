@@ -10,6 +10,8 @@ import { MaintenanceScreen } from './components/maintenance/MaintenanceScreen';
 import { ShoppingScreen } from './components/shopping/ShoppingScreen';
 import { WeekScreen } from './components/week/WeekScreen';
 import { useAppState } from './hooks/useAppState';
+import { useReminders } from './hooks/useReminders';
+import { syncReminders } from './lib/syncReminders';
 import { colors } from './theme/colors';
 import { typography } from './theme/typography';
 
@@ -24,6 +26,7 @@ const tabs: TabItem<AppTab>[] = [
 export function LifePlanApp() {
   const insets = useSafeAreaInsets();
   const store = useAppState();
+  const reminders = useReminders();
   const [activeTab, setActiveTab] = useState<AppTab>('week');
   const [fontsLoaded, fontError] = useFonts({ Fraunces_600SemiBold });
   // A font failure falls back to the system serif instead of holding the splash.
@@ -32,6 +35,19 @@ export function LifePlanApp() {
   useEffect(() => {
     if (isReady) SplashScreen.hideAsync();
   }, [isReady]);
+
+  useEffect(() => {
+    if (!store.isLoaded || !reminders.isLoaded || reminders.hasPermission === null) {
+      return;
+    }
+    syncReminders(store.state, reminders.settings, reminders.hasPermission);
+  }, [
+    store.isLoaded,
+    store.state,
+    reminders.isLoaded,
+    reminders.settings,
+    reminders.hasPermission,
+  ]);
 
   if (!isReady) return null;
 
@@ -47,7 +63,9 @@ export function LifePlanApp() {
       <View style={styles.content}>
         {activeTab === 'week' ? <WeekScreen store={store} /> : null}
         {activeTab === 'shopping' ? <ShoppingScreen store={store} /> : null}
-        {activeTab === 'maintenance' ? <MaintenanceScreen store={store} /> : null}
+        {activeTab === 'maintenance' ? (
+          <MaintenanceScreen reminders={reminders} store={store} />
+        ) : null}
       </View>
       <TabBar activeTab={activeTab} onChangeTab={setActiveTab} tabs={tabs} />
     </View>

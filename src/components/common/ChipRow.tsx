@@ -9,12 +9,14 @@ type ChipRowProps<T extends string> = {
   options: ChipOption<T>[];
   selectedId: T;
   onSelect: (id: T) => void;
+  disabled?: boolean;
 };
 
 export function ChipRow<T extends string>({
   options,
   selectedId,
   onSelect,
+  disabled,
 }: ChipRowProps<T>) {
   return (
     <ScrollView
@@ -27,10 +29,15 @@ export function ChipRow<T extends string>({
         return (
           <Pressable
             accessibilityRole="button"
-            accessibilityState={{ selected: isSelected }}
+            accessibilityState={{ selected: isSelected, disabled }}
+            disabled={disabled}
             key={option.id}
             onPress={() => onSelect(option.id)}
-            style={[styles.chip, isSelected ? styles.chipSelected : null]}
+            style={[
+              styles.chip,
+              isSelected ? styles.chipSelected : null,
+              disabled ? styles.chipDisabled : null,
+            ]}
           >
             <Text
               numberOfLines={1}
@@ -63,6 +70,9 @@ const styles = StyleSheet.create({
   chipSelected: {
     backgroundColor: colors.accent,
     borderColor: colors.accent,
+  },
+  chipDisabled: {
+    opacity: 0.5,
   },
   label: {
     color: colors.textSecondary,

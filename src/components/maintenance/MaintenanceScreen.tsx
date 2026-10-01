@@ -2,14 +2,22 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 import type { AppStore } from '../../hooks/useAppState';
+import type { RemindersStore } from '../../hooks/useReminders';
 import { backupFileName, createBackupText, parseBackupText } from '../../lib/backup';
 import { pickBackupText, shareBackupFile } from '../../services/backupFiles';
 import { sha256 } from '../../services/sha256';
 import { confirmAction } from '../common/confirmAction';
 import { DataSection, type DataStatus } from './DataSection';
 import { HousesSection } from './HousesSection';
+import { RemindersSection } from './RemindersSection';
 
-export function MaintenanceScreen({ store }: { store: AppStore }) {
+export function MaintenanceScreen({
+  store,
+  reminders,
+}: {
+  store: AppStore;
+  reminders: RemindersStore;
+}) {
   const [status, setStatus] = useState<DataStatus>(null);
 
   async function handleBackup() {
@@ -64,6 +72,12 @@ export function MaintenanceScreen({ store }: { store: AppStore }) {
         onAdd={() => store.addHouse(`Casa ${store.state.houses.length + 1}`)}
         onDelete={store.deleteHouse}
         onRename={store.renameHouse}
+      />
+      <RemindersSection
+        hasPermission={reminders.hasPermission}
+        onSelectMinutes={reminders.setMinutesBefore}
+        onToggle={reminders.setEnabled}
+        settings={reminders.settings}
       />
       <DataSection
         onBackup={handleBackup}
