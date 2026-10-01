@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+message=$(head -n 1 "$1")
+pattern='^(feat|fix|docs|test|build|perf|style|refactor|chore|ci|raw|cleanup|remove): [^[:space:]].*$'
+
+if ! printf '%s\n' "$message" | grep -Eq "$pattern"; then
+  printf '%s\n' \
+    'Invalid commit message.' \
+    'Use: type: message' \
+    'Example: feat: add account summary' \
+    'Types: feat, fix, docs, test, build, perf, style, refactor, chore, ci, raw, cleanup, remove'
+  exit 1
+fi

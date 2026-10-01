@@ -1,0 +1,91 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+
+# generated native folders
+/ios
+/android
+
+# Android / Gradle
+.gradle/
+build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.iml
+.idea/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+*.aab
+*.apk
+output-metadata.json
+
+# Keystore / signing
+*.jks
+*.keystore
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Google Services
+google-services.json
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+
+# OS / local env
+.DS_Store
+.codex/
+.superpowers/
+.mcp.json
+*.pem
+.env
+.env.*
+!.env.example
+.env*.local
+*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Coverage reports
+coverage/
+
+# Android Profiling
+*.hprof
+
+# gerenciado pelo kav-cli
+/.kav/prompts/
+/.kav/agents/
+/.claude/commands/
+/.claude/agents/
+/.cursor/commands/
+/.cursor/agents/
+/.agents/skills/
+/.codex/agents/
+
+# Graphify: keep only the shareable outputs
+/graphify-out/*
+!/graphify-out/graph.html
+!/graphify-out/graph.json
+!/graphify-out/GRAPH_REPORT.md
