@@ -1,4 +1,5 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "project": ["**/*.{js,jsx,ts,tsx}!", "!jest.setup.ts!"]
+  "project": ["**/*.{js,jsx,ts,tsx}!", "!jest.setup.ts!"],
+  "ignoreDependencies": ["expo-system-ui", "expo-updates"]
 }

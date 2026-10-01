@@ -6,7 +6,7 @@ Life Plan is a personal Android app (React Native, Expo, TypeScript) for one use
 
 ## Status
 
-No feature is implemented yet. Everything below is planned.
+Implemented: themed app shell with header (app icon, time-based greeting), three tabs (`Semana`, `Compras`, `Manutenção`) with placeholder content, app icon, and native splash. The planner, shopping list and maintenance features below are still planned (spec `docs/specs/001-life-plan-app.md`).
 
 ## Planned Features
 

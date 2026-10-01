@@ -1,6 +1,6 @@
 # Coverage Baseline
 
-No baseline recorded yet. Record the first one here after the test runner and the first `src/lib/` tests exist.
+2026-10-01 (plan 001): `src/lib/` at 100% statements, 100% branches, 100% functions, 100% lines (`greeting.ts`, 9 tests).
 
 ## Command
 

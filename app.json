@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Life Plan",
+    "slug": "life-plan-app",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/app-icon.png",
+    "userInterfaceStyle": "light",
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F6F1E9",
+        "foregroundImage": "./assets/adaptive-icon-foreground.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "resize",
+      "package": "br.com.lifeplan.app"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-logo.png",
+          "backgroundColor": "#F6F1E9",
+          "resizeMode": "contain",
+          "imageWidth": 180
+        }
+      ]
+    ]
+  }
+}

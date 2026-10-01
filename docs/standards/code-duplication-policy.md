@@ -24,4 +24,4 @@ npx jscpd src --min-tokens 50 --threshold 5
 
 ## Current Baseline
 
-No baseline recorded yet (no code exists). Record the first measurement here.
+2026-10-01 (plan 001): 0 clones, 0% duplicated lines (7 files, 256 lines in `src/`).
