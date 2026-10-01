@@ -10,6 +10,7 @@ import {
   renameHouse,
 } from '../lib/houses';
 import { createId } from '../lib/ids';
+import { addItem, clearBought, deleteItem, toggleBought } from '../lib/shopping';
 
 const STORAGE_KEY = '@life-plan-app/state/v1';
 const LOAD_ERROR = 'Não foi possível ler os dados salvos.';
@@ -54,6 +55,11 @@ export function useAppState() {
     renameHouse: (id: string, name: string) => update(renameHouse(state, id, name)),
     deleteHouse: (id: string) => update(deleteHouse(state, id)),
     getDeleteBlock: (id: string): DeleteBlock | null => deleteBlockReason(state, id),
+    addShoppingItem: (name: string, houseId: string) =>
+      update(addItem(state, createId('item'), name, houseId)),
+    toggleShoppingItem: (id: string) => update(toggleBought(state, id)),
+    deleteShoppingItem: (id: string) => update(deleteItem(state, id)),
+    clearBoughtItems: () => update(clearBought(state)),
     replaceState: update,
     resetState: () => update(createDefaultState()),
   };

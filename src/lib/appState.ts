@@ -16,7 +16,7 @@ type OneOff = {
   durationMin: number;
 };
 
-type ShoppingItem = {
+export type ShoppingItem = {
   id: string;
   name: string;
   houseId: string;

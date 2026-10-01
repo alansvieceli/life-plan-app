@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppHeader } from './components/common/AppHeader';
 import { TabBar, type TabItem } from './components/common/TabBar';
 import { MaintenanceScreen } from './components/maintenance/MaintenanceScreen';
+import { ShoppingScreen } from './components/shopping/ShoppingScreen';
 import { useAppState } from './hooks/useAppState';
 import { colors } from './theme/colors';
 import { typography } from './theme/typography';
@@ -42,11 +43,11 @@ export function LifePlanApp() {
       <AppHeader />
       {store.saveError ? <Text style={styles.error}>{store.saveError}</Text> : null}
       <View style={styles.content}>
-        {activeTab === 'maintenance' ? (
-          <MaintenanceScreen store={store} />
-        ) : (
+        {activeTab === 'week' ? (
           <Text style={styles.sectionTitle}>{activeLabel}</Text>
-        )}
+        ) : null}
+        {activeTab === 'shopping' ? <ShoppingScreen store={store} /> : null}
+        {activeTab === 'maintenance' ? <MaintenanceScreen store={store} /> : null}
       </View>
       <TabBar activeTab={activeTab} onChangeTab={setActiveTab} tabs={tabs} />
     </View>
