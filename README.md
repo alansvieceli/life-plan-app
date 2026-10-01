@@ -10,7 +10,7 @@ All planned features from `docs/specs/001-life-plan-app.md` are implemented:
 - App icon and native splash screen (kept until saved data is loaded).
 - `Semana`: browse weeks, see each day's activities (weekly routines and one-off activities sorted by start time, overlaps flagged), add, edit and delete activities.
 - `Compras`: shopping items per house, filter by house, mark as bought, delete and clear bought items.
-- `Manutenção`: reminders (a local notification before each event, with the lead time configurable), manage houses (free list, at least one), back up, restore and reset local data.
+- `Manutenção`: reminders (a local notification before each event, with the lead time configurable), past events retention (one-off activities older than 7 to 60 days, default 10, are deleted automatically), manage houses (free list, at least one), back up, restore and reset local data.
 
 ## Requirements
 
