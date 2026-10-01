@@ -11,17 +11,34 @@ const normalize = (raw: unknown) => (typeof raw === 'number' ? raw : -1);
 beforeEach(() => AsyncStorage.clear());
 
 describe('device settings', () => {
-  it('normalizes undefined when nothing is stored', async () => {
-    expect(await loadDeviceSetting('k', normalize)).toBe(-1);
+  it('normalizes undefined when nothing is stored, without flagging a failure', async () => {
+    expect(await loadDeviceSetting('k', normalize)).toEqual({
+      value: -1,
+      failed: false,
+    });
   });
 
   it('round trips a saved value', async () => {
     await saveDeviceSetting('k', 7);
-    expect(await loadDeviceSetting('k', normalize)).toBe(7);
+    expect(await loadDeviceSetting('k', normalize)).toEqual({
+      value: 7,
+      failed: false,
+    });
   });
 
-  it('falls back to the normalized default on corrupt JSON', async () => {
+  it('falls back to the default and flags a failure on corrupt JSON', async () => {
     await AsyncStorage.setItem('k', '{broken');
-    expect(await loadDeviceSetting('k', normalize)).toBe(-1);
+    expect(await loadDeviceSetting('k', normalize)).toEqual({
+      value: -1,
+      failed: true,
+    });
+  });
+
+  it('falls back to the default and flags a failure when the read throws', async () => {
+    jest.spyOn(AsyncStorage, 'getItem').mockRejectedValueOnce(new Error('boom'));
+    expect(await loadDeviceSetting('k', normalize)).toEqual({
+      value: -1,
+      failed: true,
+    });
   });
 });

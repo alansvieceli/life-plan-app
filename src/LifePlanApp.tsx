@@ -49,13 +49,15 @@ export function LifePlanApp() {
     if (isReady) SplashScreen.hideAsync();
   }, [isReady]);
 
+  // After a failed read the state is the empty default; syncing it would cancel the
+  // reminders of the data that is still safely stored.
   useEffect(() => {
-    if (!store.isLoaded || !reminders.isLoaded || reminders.hasPermission === null) {
-      return;
-    }
+    if (!store.isLoaded || store.loadFailed || !reminders.isLoaded) return;
+    if (reminders.hasPermission === null) return;
     syncReminders(store.state, reminders.settings, reminders.hasPermission);
   }, [
     store.isLoaded,
+    store.loadFailed,
     store.state,
     reminders.isLoaded,
     reminders.settings,
@@ -63,11 +65,14 @@ export function LifePlanApp() {
   ]);
 
   // Cleanup runs once per start, after both the data and the period are loaded.
+  // A failed read of the period leaves the default in place, which must never be
+  // used to delete data the user chose to keep longer.
   useEffect(() => {
     if (hasPurged.current || !store.isLoaded || !retention.isLoaded) return;
+    if (retention.loadFailed) return;
     hasPurged.current = true;
     store.purgeOldOneOffs(retention.value.keepDays);
-  }, [store, retention.isLoaded, retention.value.keepDays]);
+  }, [store, retention.isLoaded, retention.loadFailed, retention.value.keepDays]);
 
   if (!isReady) return null;
 

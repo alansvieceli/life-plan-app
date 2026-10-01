@@ -5,6 +5,7 @@ import { loadDeviceSetting, saveDeviceSetting } from '../storage/deviceSettings'
 export type DeviceSetting<T> = {
   value: T;
   isLoaded: boolean;
+  loadFailed: boolean;
   save: (next: T) => Promise<void>;
 };
 
@@ -15,12 +16,14 @@ export function useDeviceSetting<T>(
 ): DeviceSetting<T> {
   const [value, setValue] = useState<T>(defaults);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
     loadDeviceSetting(key, normalize).then((loaded) => {
       if (!isMounted) return;
-      setValue(loaded);
+      setValue(loaded.value);
+      setLoadFailed(loaded.failed);
       setIsLoaded(true);
     });
     return () => {
@@ -37,5 +40,5 @@ export function useDeviceSetting<T>(
     [key],
   );
 
-  return { value, isLoaded, save };
+  return { value, isLoaded, loadFailed, save };
 }

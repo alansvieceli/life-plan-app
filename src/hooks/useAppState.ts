@@ -24,6 +24,7 @@ export function useAppState() {
   const [state, setState] = useState<AppState>(createDefaultState);
   const [isLoaded, setIsLoaded] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
   // A failed read must never be followed by a save that overwrites the stored data.
   const canSave = useRef(true);
 
@@ -38,6 +39,7 @@ export function useAppState() {
       })
       .catch(() => {
         canSave.current = false;
+        setLoadFailed(true);
         setSaveError(LOAD_ERROR);
       })
       .finally(() => setIsLoaded(true));
@@ -54,6 +56,7 @@ export function useAppState() {
   return {
     state,
     isLoaded,
+    loadFailed,
     saveError,
     addHouse: (name: string) => update(addHouse(state, createId('house'), name)),
     renameHouse: (id: string, name: string) => update(renameHouse(state, id, name)),
