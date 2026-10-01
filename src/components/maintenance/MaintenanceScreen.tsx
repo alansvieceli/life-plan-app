@@ -2,23 +2,42 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 import type { AppStore } from '../../hooks/useAppState';
+import type { DeviceSetting } from '../../hooks/useDeviceSetting';
 import type { RemindersStore } from '../../hooks/useReminders';
 import { backupFileName, createBackupText, parseBackupText } from '../../lib/backup';
+import type { RetentionSettings } from '../../lib/retention';
 import { pickBackupText, shareBackupFile } from '../../services/backupFiles';
 import { sha256 } from '../../services/sha256';
 import { confirmAction } from '../common/confirmAction';
 import { DataSection, type DataStatus } from './DataSection';
 import { HousesSection } from './HousesSection';
 import { RemindersSection } from './RemindersSection';
+import { RetentionSection } from './RetentionSection';
 
 export function MaintenanceScreen({
   store,
   reminders,
+  retention,
 }: {
   store: AppStore;
   reminders: RemindersStore;
+  retention: DeviceSetting<RetentionSettings>;
 }) {
   const [status, setStatus] = useState<DataStatus>(null);
+
+  async function handleKeepDays(keepDays: number) {
+    const expired = store.countExpiredOneOffs(keepDays);
+    if (expired > 0) {
+      const confirmed = await confirmAction(
+        'Apagar eventos antigos',
+        `Apagar ${expired} evento(s) avulso(s) mais antigo(s) que ${keepDays} dias?`,
+        'Apagar',
+      );
+      if (!confirmed) return;
+    }
+    await retention.save({ keepDays });
+    store.purgeOldOneOffs(keepDays);
+  }
 
   async function handleBackup() {
     try {
@@ -79,6 +98,7 @@ export function MaintenanceScreen({
         onToggle={reminders.setEnabled}
         settings={reminders.settings}
       />
+      <RetentionSection keepDays={retention.value.keepDays} onSelect={handleKeepDays} />
       <DataSection
         onBackup={handleBackup}
         onReset={handleReset}

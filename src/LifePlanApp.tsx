@@ -1,6 +1,6 @@
 import { Fraunces_600SemiBold, useFonts } from '@expo-google-fonts/fraunces';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -10,10 +10,17 @@ import { MaintenanceScreen } from './components/maintenance/MaintenanceScreen';
 import { ShoppingScreen } from './components/shopping/ShoppingScreen';
 import { WeekScreen } from './components/week/WeekScreen';
 import { useAppState } from './hooks/useAppState';
+import { useDeviceSetting } from './hooks/useDeviceSetting';
 import { useReminders } from './hooks/useReminders';
+import {
+  DEFAULT_RETENTION_SETTINGS,
+  normalizeRetentionSettings,
+} from './lib/retention';
 import { syncReminders } from './lib/syncReminders';
 import { colors } from './theme/colors';
 import { typography } from './theme/typography';
+
+const RETENTION_KEY = '@life-plan-app/retention/v1';
 
 type AppTab = 'week' | 'shopping' | 'maintenance';
 
@@ -27,6 +34,12 @@ export function LifePlanApp() {
   const insets = useSafeAreaInsets();
   const store = useAppState();
   const reminders = useReminders();
+  const retention = useDeviceSetting(
+    RETENTION_KEY,
+    DEFAULT_RETENTION_SETTINGS,
+    normalizeRetentionSettings,
+  );
+  const hasPurged = useRef(false);
   const [activeTab, setActiveTab] = useState<AppTab>('week');
   const [fontsLoaded, fontError] = useFonts({ Fraunces_600SemiBold });
   // A font failure falls back to the system serif instead of holding the splash.
@@ -49,6 +62,13 @@ export function LifePlanApp() {
     reminders.hasPermission,
   ]);
 
+  // Cleanup runs once per start, after both the data and the period are loaded.
+  useEffect(() => {
+    if (hasPurged.current || !store.isLoaded || !retention.isLoaded) return;
+    hasPurged.current = true;
+    store.purgeOldOneOffs(retention.value.keepDays);
+  }, [store, retention.isLoaded, retention.value.keepDays]);
+
   if (!isReady) return null;
 
   return (
@@ -64,7 +84,11 @@ export function LifePlanApp() {
         {activeTab === 'week' ? <WeekScreen store={store} /> : null}
         {activeTab === 'shopping' ? <ShoppingScreen store={store} /> : null}
         {activeTab === 'maintenance' ? (
-          <MaintenanceScreen reminders={reminders} store={store} />
+          <MaintenanceScreen
+            reminders={reminders}
+            retention={retention}
+            store={store}
+          />
         ) : null}
       </View>
       <TabBar activeTab={activeTab} onChangeTab={setActiveTab} tabs={tabs} />

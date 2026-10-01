@@ -10,6 +10,10 @@ import {
   renameHouse,
 } from '../lib/houses';
 import { createId } from '../lib/ids';
+import {
+  countExpiredOneOffs as countExpired,
+  purgeOldOneOffs as purgeOneOffs,
+} from '../lib/retention';
 import { addItem, clearBought, deleteItem, toggleBought } from '../lib/shopping';
 
 const STORAGE_KEY = '@life-plan-app/state/v1';
@@ -64,6 +68,12 @@ export function useAppState() {
       update(upsertActivity(state, id ?? createId(draft.kind), draft)),
     deleteActivity: (kind: 'routine' | 'oneoff', id: string) =>
       update(removeActivity(state, kind, id)),
+    purgeOldOneOffs: (keepDays: number) => {
+      const next = purgeOneOffs(state, keepDays, new Date());
+      if (next !== state) update(next);
+    },
+    countExpiredOneOffs: (keepDays: number) =>
+      countExpired(state, keepDays, new Date()),
     replaceState: update,
     resetState: () => update(createDefaultState()),
   };
