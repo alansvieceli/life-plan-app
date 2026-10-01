@@ -26,7 +26,13 @@
         }
       ],
       "expo-sharing",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "color": "#7C9A7E"
+        }
+      ]
     ]
   }
 }
