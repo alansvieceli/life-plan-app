@@ -107,15 +107,15 @@ Rules:
 
 ## Branding
 
-- **App icon:** sage-green glyph on paper background (a calendar page with a leaf/check mark). Files: `assets/app-icon.png` (1024), `assets/adaptive-icon-foreground.png` (1024, transparent, inside the Android safe zone), adaptive background `#F6F1E9`, `assets/favicon.png`.
+- **App icon:** a cabin with a lit amber window (direction A "Cabana", sketches in the Life Plan identity canvas): wood-brown roof and chimney, cream walls, sage door, on a sage background. Files: `assets/app-icon.png` (1024, full-bleed sage square), `assets/adaptive-icon-foreground.png` (1024, transparent, glyph inside the Android safe zone), adaptive background `#7C9A7E`, `assets/favicon.png`.
 - **Header logo:** `assets/app-icon.png` rendered small, next to a `Life Plan` serif text wordmark (no separate header image).
-- **Splash:** native splash through the `expo-splash-screen` plugin (`assets/splash-logo.png`, background `#F6F1E9`, `contain`). The splash stays visible (`preventAutoHideAsync`) until the state is loaded from AsyncStorage, then `hideAsync()`.
+- **Splash:** native splash through the `expo-splash-screen` plugin (`assets/splash-logo.png` is the rounded sage tile with the cabin, background `#F6F1E9`, `contain`). The splash stays visible (`preventAutoHideAsync`) until the state and the title font are loaded, then `hideAsync()`.
 - `app.json`: name `Life Plan`, slug `life-plan-app`, Android package `br.com.lifeplan.app`, portrait, light UI.
 - Image assets are generated once with a throwaway script; the script is not kept in the repo.
 
 ## Theme
 
-`src/theme/colors.ts` (same token names as cycle12): `background #F6F1E9`, `surface #FFFFFF`, `surfaceMuted #EEE7DA`, `border #E2D9C8`, `textPrimary #3B3A36`, `textSecondary #8A8578`, `accent #7C9A7E`, `accentText #FFFFFF`, `positive #7C9A7E`, `negative #C0705F`, `warning #D9A66B`, `info #6F93A8`, plus an activity stripe palette (`#7C9A7E`, `#D9A66B`, `#6F93A8`, `#B98BA8`). `typography.ts` mirrors cycle12 with a serif family for `screenTitle` and `sectionTitle`.
+`src/theme/colors.ts` (same token names as cycle12): `background #F6F1E9`, `surface #FFFFFF`, `surfaceMuted #EEE7DA`, `border #E2D9C8`, `textPrimary #3B3A36`, `textSecondary #8A8578`, `accent #7C9A7E`, `accentText #FFFFFF`, `positive #7C9A7E`, `negative #C0705F`, `warning #D9A66B`, `info #6F93A8`, plus an activity stripe palette (`#7C9A7E`, `#D9A66B`, `#6F93A8`, `#B98BA8`). `typography.ts` mirrors cycle12; `screenTitle` and `sectionTitle` use Fraunces SemiBold (`@expo-google-fonts/fraunces`), falling back to the system serif if the font fails to load. The wood-brown `#5B4636` is part of the identity but only appears in the icon.
 
 ## Architecture
 

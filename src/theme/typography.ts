@@ -5,19 +5,19 @@ const fontWeights = {
   bold: '800',
 } as const;
 
-const serif = 'serif';
+const serif = 'Fraunces_600SemiBold';
 
 export const typography = {
   screenTitle: {
     fontFamily: serif,
     fontSize: 24,
-    fontWeight: fontWeights.semibold,
+    fontWeight: fontWeights.regular,
     lineHeight: 30,
   },
   sectionTitle: {
     fontFamily: serif,
     fontSize: 18,
-    fontWeight: fontWeights.semibold,
+    fontWeight: fontWeights.regular,
     lineHeight: 24,
   },
   cardTitle: { fontSize: 16, fontWeight: fontWeights.semibold, lineHeight: 22 },

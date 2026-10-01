@@ -1,3 +1,4 @@
+import { Fraunces_600SemiBold, useFonts } from '@expo-google-fonts/fraunces';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -24,13 +25,15 @@ export function LifePlanApp() {
   const insets = useSafeAreaInsets();
   const store = useAppState();
   const [activeTab, setActiveTab] = useState<AppTab>('week');
-  const { isLoaded } = store;
+  const [fontsLoaded, fontError] = useFonts({ Fraunces_600SemiBold });
+  // A font failure falls back to the system serif instead of holding the splash.
+  const isReady = store.isLoaded && (fontsLoaded || fontError !== null);
 
   useEffect(() => {
-    if (isLoaded) SplashScreen.hideAsync();
-  }, [isLoaded]);
+    if (isReady) SplashScreen.hideAsync();
+  }, [isReady]);
 
-  if (!isLoaded) return null;
+  if (!isReady) return null;
 
   return (
     <View

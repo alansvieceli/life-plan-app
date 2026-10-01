@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#F6F1E9",
+        "backgroundColor": "#7C9A7E",
         "foregroundImage": "./assets/adaptive-icon-foreground.png"
       },
       "predictiveBackGestureEnabled": false,
@@ -25,7 +25,8 @@
           "imageWidth": 180
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      "expo-font"
     ]
   }
 }
