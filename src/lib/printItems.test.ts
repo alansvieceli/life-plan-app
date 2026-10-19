@@ -1,4 +1,64 @@
-import { isValidUrl, urlHost } from './printItems';
+import type { AppState, PrintItem } from './appState';
+import {
+  addPrintItem,
+  clearPrinted,
+  deletePrintItem,
+  isValidUrl,
+  sortPrintItems,
+  togglePrinted,
+  urlHost,
+} from './printItems';
+import { createSampleState } from './stateFixtures';
+
+const item = (id: string, printed = false): PrintItem => ({
+  id,
+  title: id,
+  url: 'https://a.co',
+  printed,
+});
+const stateWith = (printItems: PrintItem[]): AppState => ({
+  ...createSampleState(),
+  printItems,
+});
+
+describe('addPrintItem', () => {
+  it('trims title and url and appends a pending item', () => {
+    const next = addPrintItem(stateWith([]), 'p1', '  Suporte ', ' https://a.co/m ');
+    expect(next.printItems).toEqual([
+      { id: 'p1', title: 'Suporte', url: 'https://a.co/m', printed: false },
+    ]);
+  });
+
+  it('ignores an empty title or an invalid url', () => {
+    const state = stateWith([]);
+    expect(addPrintItem(state, 'p1', '  ', 'https://a.co')).toBe(state);
+    expect(addPrintItem(state, 'p1', 'x', 'javascript:alert(1)')).toBe(state);
+  });
+});
+
+describe('print item changes', () => {
+  it('toggles printed', () => {
+    expect(togglePrinted(stateWith([item('a')]), 'a').printItems[0].printed).toBe(true);
+  });
+
+  it('deletes only the given id', () => {
+    const state = stateWith([item('a'), item('b')]);
+    expect(deletePrintItem(state, 'a').printItems.map((i) => i.id)).toEqual(['b']);
+  });
+
+  it('clears only printed items', () => {
+    const state = stateWith([item('a', true), item('b')]);
+    expect(clearPrinted(state).printItems.map((i) => i.id)).toEqual(['b']);
+  });
+});
+
+describe('sortPrintItems', () => {
+  it('puts pending first, keeps creation order and does not mutate', () => {
+    const items = [item('a', true), item('b'), item('c')];
+    expect(sortPrintItems(items).map((i) => i.id)).toEqual(['b', 'c', 'a']);
+    expect(items.map((i) => i.id)).toEqual(['a', 'b', 'c']);
+  });
+});
 
 describe('isValidUrl', () => {
   it.each([
