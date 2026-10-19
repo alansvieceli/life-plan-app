@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { AppStore } from '../../hooks/useAppState';
 import type { ActivityDraft } from '../../lib/activities';
 import { emptyForm, type FormValues, formFromActivity } from '../../lib/activityForm';
+import type { Task } from '../../lib/appState';
 import {
   addDays,
   formatDayTitle,
@@ -13,12 +14,16 @@ import {
   weekNumber,
 } from '../../lib/dates';
 import { type Activity, activitiesForDate } from '../../lib/schedule';
+import { hasPendingTask, tasksForDate } from '../../lib/tasks';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 import { FloatingAddButton } from '../common/FloatingAddButton';
 import { ActivityCard } from './ActivityCard';
 import { ActivityFormModal } from './ActivityFormModal';
+import { AddChoiceSheet } from './AddChoiceSheet';
 import { DayStrip } from './DayStrip';
+import { TaskFormModal } from './TaskFormModal';
+import { TaskList } from './TaskList';
 import { WeekHeader } from './WeekHeader';
 
 type FormState = { editing: Activity | null; initial: FormValues };
@@ -27,11 +32,14 @@ export function WeekScreen({ store }: { store: AppStore }) {
   const todayKey = toDateKey(new Date());
   const [selectedKey, setSelectedKey] = useState(todayKey);
   const [form, setForm] = useState<FormState | null>(null);
+  const [isChoosing, setIsChoosing] = useState(false);
+  const [taskForm, setTaskForm] = useState<{ editing: Task | null } | null>(null);
 
   const selected = parseDateKey(selectedKey);
   const weekStart = startOfWeek(selected);
   const days = Array.from({ length: 7 }, (_, index) => addDays(weekStart, index));
   const activities = activitiesForDate(store.state, selectedKey);
+  const tasks = tasksForDate(store.state, selectedKey);
 
   function shiftWeek(weeks: number) {
     setSelectedKey(toDateKey(addDays(selected, weeks * 7)));
@@ -47,6 +55,17 @@ export function WeekScreen({ store }: { store: AppStore }) {
     setForm(null);
   }
 
+  function handleSaveTask(title: string, date: string) {
+    if (taskForm?.editing) store.updateTask(taskForm.editing.id, title, date);
+    else store.addTask(title, date);
+    setTaskForm(null);
+  }
+
+  function handleDeleteTask() {
+    if (taskForm?.editing) store.deleteTask(taskForm.editing.id);
+    setTaskForm(null);
+  }
+
   return (
     <View style={styles.container}>
       <WeekHeader
@@ -57,12 +76,13 @@ export function WeekScreen({ store }: { store: AppStore }) {
       />
       <DayStrip
         days={days}
+        hasPending={(key) => hasPendingTask(store.state, key)}
         onSelect={setSelectedKey}
         selectedKey={selectedKey}
         todayKey={todayKey}
       />
       <ScrollView contentContainerStyle={styles.list}>
-        {activities.length === 0 ? (
+        {activities.length === 0 && tasks.length === 0 ? (
           <Text style={styles.empty}>Nada planejado para este dia.</Text>
         ) : null}
         {activities.map((activity) => (
@@ -74,11 +94,36 @@ export function WeekScreen({ store }: { store: AppStore }) {
             }
           />
         ))}
+        <TaskList
+          onDelete={store.deleteTask}
+          onEdit={(task) => setTaskForm({ editing: task })}
+          onToggle={store.toggleTask}
+          tasks={tasks}
+        />
       </ScrollView>
-      <FloatingAddButton
-        label="Adicionar atividade"
-        onPress={() => setForm({ editing: null, initial: emptyForm(selectedKey) })}
-      />
+      <FloatingAddButton label="Adicionar" onPress={() => setIsChoosing(true)} />
+      {isChoosing ? (
+        <AddChoiceSheet
+          onClose={() => setIsChoosing(false)}
+          onEvent={() => {
+            setIsChoosing(false);
+            setForm({ editing: null, initial: emptyForm(selectedKey) });
+          }}
+          onTask={() => {
+            setIsChoosing(false);
+            setTaskForm({ editing: null });
+          }}
+        />
+      ) : null}
+      {taskForm ? (
+        <TaskFormModal
+          editing={taskForm.editing}
+          initialDate={selectedKey}
+          onClose={() => setTaskForm(null)}
+          onDelete={handleDeleteTask}
+          onSave={handleSaveTask}
+        />
+      ) : null}
       {form ? (
         <ActivityFormModal
           editing={form.editing}

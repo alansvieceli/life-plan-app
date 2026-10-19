@@ -29,8 +29,8 @@ export function MaintenanceScreen({
     const expired = store.countExpiredOneOffs(keepDays);
     if (expired > 0) {
       const confirmed = await confirmAction(
-        'Apagar eventos antigos',
-        `Apagar ${expired} evento(s) avulso(s) mais antigo(s) que ${keepDays} dias?`,
+        'Apagar itens antigos',
+        `Apagar ${expired} item(ns) (eventos avulsos e tarefas feitas) mais antigo(s) que ${keepDays} dias?`,
         'Apagar',
       );
       if (!confirmed) return;

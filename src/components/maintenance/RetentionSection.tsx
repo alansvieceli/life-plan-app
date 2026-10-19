@@ -26,7 +26,7 @@ export function RetentionSection({ keepDays, onSelect }: RetentionSectionProps) 
         selectedId={String(keepDays)}
       />
       <Text style={styles.note}>
-        Eventos avulsos mais antigos são apagados automaticamente.
+        Eventos avulsos e tarefas feitas mais antigos são apagados automaticamente.
       </Text>
     </SectionCard>
   );
