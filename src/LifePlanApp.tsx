@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppHeader } from './components/common/AppHeader';
 import { TabBar, type TabItem } from './components/common/TabBar';
 import { MaintenanceScreen } from './components/maintenance/MaintenanceScreen';
+import { PrintScreen } from './components/print/PrintScreen';
 import { ShoppingScreen } from './components/shopping/ShoppingScreen';
 import { WeekScreen } from './components/week/WeekScreen';
 import { useAppState } from './hooks/useAppState';
@@ -23,11 +24,12 @@ import { typography } from './theme/typography';
 
 const RETENTION_KEY = '@life-plan-app/retention/v1';
 
-type AppTab = 'week' | 'shopping' | 'maintenance';
+type AppTab = 'week' | 'shopping' | 'print' | 'maintenance';
 
 const tabs: TabItem<AppTab>[] = [
   { id: 'week', icon: 'calendar-outline', label: 'Semana' },
   { id: 'shopping', icon: 'cart-outline', label: 'Compras' },
+  { id: 'print', icon: 'cube-outline', label: '3D' },
   { id: 'maintenance', icon: 'settings-outline', label: 'Manutenção' },
 ];
 
@@ -102,6 +104,7 @@ export function LifePlanApp() {
       <View style={styles.content}>
         {activeTab === 'week' ? <WeekScreen store={store} /> : null}
         {activeTab === 'shopping' ? <ShoppingScreen store={store} /> : null}
+        {activeTab === 'print' ? <PrintScreen store={store} /> : null}
         {activeTab === 'maintenance' ? (
           <MaintenanceScreen
             reminders={reminders}
