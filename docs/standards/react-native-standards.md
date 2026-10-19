@@ -5,7 +5,7 @@ Practical rules for this app. Keep code simple; apply a rule when it removes rea
 ## Structure
 
 - `src/lib/`: pure TypeScript logic (no React, no React Native imports). All business rules live here and are unit tested.
-- `src/hooks/`: state and side effects. `useAppState` is the only code that reads or writes AsyncStorage.
+- `src/hooks/`: state and side effects. `useAppState` and `useDeviceSetting` are the only code that reads or writes AsyncStorage.
 - `src/components/common/`: reusable, feature-agnostic components (buttons, modal shell, fields, tab bar, header).
 - `src/components/<feature>/`: components specific to one feature (`week`, `shopping`, `maintenance`).
 - `src/theme/`: colors, typography, shared styles. Nothing else defines visual constants.

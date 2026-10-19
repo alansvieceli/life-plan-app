@@ -6,16 +6,21 @@ Personal Android app (React Native, Expo, TypeScript) to organize the week and k
 
 All planned features from `docs/specs/001-life-plan-app.md` are implemented:
 
-- Themed app shell (paper tones, sage green, Fraunces serif titles, cabin icon) with header, time-based greeting and three tabs: `Semana`, `Compras`, `Manutenção`.
+- Themed app shell (paper tones, sage green, Fraunces serif titles, cabin icon) with header, time-based greeting and four tabs: `Semana`, `Compras`, `3D`, `Manutenção`.
 - App icon and native splash screen (kept until saved data is loaded).
-- `Semana`: browse weeks, see each day's activities (weekly routines and one-off activities sorted by start time, overlaps flagged), add, edit and delete activities.
+- `Semana`: browse weeks, see each day's activities (weekly routines and one-off activities sorted by start time, overlaps flagged), add, edit and delete activities. Day tasks (no time, with a done state) appear below the activities; unfinished tasks from past days move to today by themselves.
+- `3D`: a print list of model links (title + link), opens the link in the browser, mark as printed, delete and clear printed items.
 - `Compras`: shopping items per house, filter by house, mark as bought, delete and clear bought items.
-- `Manutenção`: manage houses (free list, at least one), back up, restore and reset local data.
+- `Manutenção`: reminders (a local notification before each event, with the lead time configurable), past events retention (one-off activities and done tasks older than 7 to 60 days, default 10, are deleted automatically), manage houses (free list, at least one), back up, restore and reset local data.
 
 ## Requirements
 
 - Node.js 24 and npm
 - Android Studio with an emulator (Android only)
+
+## Reminders
+
+Event reminders use local notifications, so they need a native build (`npm run android`); in Expo Go they do nothing. Reminder settings are stored on the device and are not part of the backup file.
 
 ## Install and run
 

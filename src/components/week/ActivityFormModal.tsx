@@ -1,16 +1,15 @@
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput } from 'react-native';
 
 import type { ActivityDraft } from '../../lib/activities';
 import { type FormValues, parseActivityForm } from '../../lib/activityForm';
-import { addDays, formatDayTitle, parseDateKey, toDateKey } from '../../lib/dates';
 import type { Activity } from '../../lib/schedule';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 import { ActionButton } from '../common/ActionButton';
 import { ChipRow } from '../common/ChipRow';
 import { confirmAction } from '../common/confirmAction';
-import { IconButton } from '../common/IconButton';
+import { DateField } from '../common/DateField';
 import { ModalShell } from '../common/ModalShell';
 import { NumberPairField } from '../common/NumberPairField';
 import { WeekdayPicker } from './WeekdayPicker';
@@ -42,10 +41,6 @@ export function ActivityFormModal({
 
   function setField<K extends keyof FormValues>(key: K, value: FormValues[K]) {
     setValues((previous) => ({ ...previous, [key]: value }));
-  }
-
-  function shiftDate(days: number) {
-    setField('date', toDateKey(addDays(parseDateKey(values.date), days)));
   }
 
   function handleSave() {
@@ -122,21 +117,7 @@ export function ActivityFormModal({
           <Text style={styles.note}>Vale para todas as semanas.</Text>
         </>
       ) : (
-        <View style={styles.dateRow}>
-          <IconButton
-            color={colors.textPrimary}
-            icon="chevron-back"
-            label="Dia anterior"
-            onPress={() => shiftDate(-1)}
-          />
-          <Text style={styles.date}>{formatDayTitle(parseDateKey(values.date))}</Text>
-          <IconButton
-            color={colors.textPrimary}
-            icon="chevron-forward"
-            label="Próximo dia"
-            onPress={() => shiftDate(1)}
-          />
-        </View>
+        <DateField dateKey={values.date} onChange={(date) => setField('date', date)} />
       )}
       {error ? <Text style={styles.error}>{error}</Text> : null}
       <ActionButton icon="checkmark" label="Salvar" onPress={handleSave} />
@@ -162,15 +143,6 @@ const styles = StyleSheet.create({
     minHeight: 44,
     paddingHorizontal: 12,
     ...typography.input,
-  },
-  dateRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  date: {
-    color: colors.textPrimary,
-    ...typography.cardTitle,
   },
   note: {
     color: colors.textSecondary,

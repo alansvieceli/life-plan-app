@@ -38,6 +38,27 @@ describe('backup round trip', () => {
   });
 });
 
+describe('backup with tasks and print items', () => {
+  it('restores a backup written before the new lists existed', async () => {
+    const { tasks: _tasks, printItems: _printItems, ...old } = createSampleState();
+    const text = await createBackupText(old as never, exportedAt, sha256);
+    const result = await parseBackupText(text, sha256);
+    expect(result).toEqual({
+      ok: true,
+      state: { ...old, tasks: [], printItems: [] },
+    });
+  });
+
+  it('rejects a task edited after export', async () => {
+    const envelope = JSON.parse(await sampleBackup());
+    envelope.data.tasks[0].title = 'Outra tarefa';
+    expect(await parseBackupText(JSON.stringify(envelope), sha256)).toEqual({
+      ok: false,
+      error: 'Backup inválido: o conteúdo foi alterado ou está corrompido.',
+    });
+  });
+});
+
 describe('parseBackupText rejections', () => {
   it('rejects text that is not JSON', async () => {
     expect(await parseBackupText('{oops', sha256)).toEqual({

@@ -10,9 +10,16 @@ type DayStripProps = {
   selectedKey: string;
   todayKey: string;
   onSelect: (key: string) => void;
+  hasPending: (key: string) => boolean;
 };
 
-export function DayStrip({ days, selectedKey, todayKey, onSelect }: DayStripProps) {
+export function DayStrip({
+  days,
+  selectedKey,
+  todayKey,
+  onSelect,
+  hasPending,
+}: DayStripProps) {
   return (
     <View style={styles.row}>
       {days.map((day) => {
@@ -42,6 +49,18 @@ export function DayStrip({ days, selectedKey, todayKey, onSelect }: DayStripProp
               {weekdayLetter(day.getDay())}
             </Text>
             <Text style={[styles.number, { color: textColor }]}>{day.getDate()}</Text>
+            <View
+              style={[
+                styles.dot,
+                {
+                  backgroundColor: hasPending(key)
+                    ? isSelected
+                      ? colors.accentText
+                      : colors.accent
+                    : 'transparent',
+                },
+              ]}
+            />
           </Pressable>
         );
       })}
@@ -66,5 +85,10 @@ const styles = StyleSheet.create({
   },
   number: {
     ...typography.cardTitle,
+  },
+  dot: {
+    borderRadius: 3,
+    height: 6,
+    width: 6,
   },
 });
