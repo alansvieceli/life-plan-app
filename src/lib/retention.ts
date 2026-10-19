@@ -13,10 +13,14 @@ export function normalizeRetentionSettings(raw: unknown): RetentionSettings {
   return { keepDays: keepDays ?? DEFAULT_RETENTION_SETTINGS.keepDays };
 }
 
+// Covers past one-offs and done tasks; pending tasks and print items never expire.
 // Date keys are zero-padded YYYY-MM-DD, so string order is date order.
-function keptOneOffs(state: AppState, keepDays: number, today: Date) {
+function kept(state: AppState, keepDays: number, today: Date) {
   const cutoff = toDateKey(addDays(today, -keepDays));
-  return state.oneOffs.filter((oneOff) => oneOff.date >= cutoff);
+  return {
+    oneOffs: state.oneOffs.filter((oneOff) => oneOff.date >= cutoff),
+    tasks: state.tasks.filter((task) => !task.done || task.date >= cutoff),
+  };
 }
 
 export function purgeOldOneOffs(
@@ -24,8 +28,11 @@ export function purgeOldOneOffs(
   keepDays: number,
   today: Date,
 ): AppState {
-  const kept = keptOneOffs(state, keepDays, today);
-  return kept.length === state.oneOffs.length ? state : { ...state, oneOffs: kept };
+  const { oneOffs, tasks } = kept(state, keepDays, today);
+  if (oneOffs.length === state.oneOffs.length && tasks.length === state.tasks.length) {
+    return state;
+  }
+  return { ...state, oneOffs, tasks };
 }
 
 export function countExpiredOneOffs(
@@ -33,5 +40,6 @@ export function countExpiredOneOffs(
   keepDays: number,
   today: Date,
 ): number {
-  return state.oneOffs.length - keptOneOffs(state, keepDays, today).length;
+  const { oneOffs, tasks } = kept(state, keepDays, today);
+  return state.oneOffs.length - oneOffs.length + state.tasks.length - tasks.length;
 }

@@ -85,3 +85,47 @@ describe('countExpiredOneOffs', () => {
     expect(removed).toBe(2);
   });
 });
+
+describe('done tasks', () => {
+  const today = new Date(2026, 9, 20);
+  const task = (id: string, date: string, done: boolean) => ({
+    id,
+    title: id,
+    date,
+    done,
+  });
+  const withTasks = (tasks: ReturnType<typeof task>[]): AppState => ({
+    ...createDefaultState(),
+    tasks,
+  });
+
+  it('keeps a done task exactly keepDays old and deletes one day older', () => {
+    const state = withTasks([
+      task('edge', '2026-10-10', true),
+      task('old', '2026-10-09', true),
+    ]);
+    expect(purgeOldOneOffs(state, 10, today).tasks.map((t) => t.id)).toEqual(['edge']);
+  });
+
+  it('never deletes pending tasks or print items', () => {
+    const state = {
+      ...withTasks([task('pending', '2020-01-01', false)]),
+      printItems: createSampleState().printItems,
+    };
+    expect(purgeOldOneOffs(state, 10, today)).toBe(state);
+  });
+
+  it('counts expired one-offs and done tasks together', () => {
+    const state = {
+      ...stateWith(['2026-10-01', '2026-10-15']),
+      tasks: [task('a', '2026-10-01', true), task('b', '2026-10-01', false)],
+    };
+    const removed =
+      state.oneOffs.length +
+      state.tasks.length -
+      (purgeOldOneOffs(state, 10, today).oneOffs.length +
+        purgeOldOneOffs(state, 10, today).tasks.length);
+    expect(countExpiredOneOffs(state, 10, today)).toBe(2);
+    expect(removed).toBe(2);
+  });
+});
