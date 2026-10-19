@@ -25,5 +25,16 @@ export function createSampleState(): AppState {
       },
     ],
     shoppingItems: [{ id: 'item-1', name: 'Café', houseId: 'house-a', bought: false }],
+    tasks: [
+      { id: 'task-1', title: 'Ligar para o banco', date: '2026-10-06', done: false },
+    ],
+    printItems: [
+      {
+        id: 'print-1',
+        title: 'Suporte de fone',
+        url: 'https://www.printables.com/model/1',
+        printed: false,
+      },
+    ],
   };
 }

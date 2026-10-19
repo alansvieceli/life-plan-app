@@ -1,3 +1,5 @@
+import { isValidUrl } from './printItems';
+
 export type House = { id: string; name: string };
 
 type Routine = {
@@ -23,11 +25,17 @@ export type ShoppingItem = {
   bought: boolean;
 };
 
+export type Task = { id: string; title: string; date: string; done: boolean };
+
+export type PrintItem = { id: string; title: string; url: string; printed: boolean };
+
 export type AppState = {
   houses: House[];
   routines: Routine[];
   oneOffs: OneOff[];
   shoppingItems: ShoppingItem[];
+  tasks: Task[];
+  printItems: PrintItem[];
 };
 
 export type StateCheck =
@@ -46,6 +54,8 @@ export function createDefaultState(): AppState {
     routines: [],
     oneOffs: [],
     shoppingItems: [],
+    tasks: [],
+    printItems: [],
   };
 }
 
@@ -158,6 +168,48 @@ function parseShoppingItem(value: unknown): ShoppingItem | null {
   };
 }
 
+function parseTask(value: unknown): Task | null {
+  if (
+    !isRecord(value) ||
+    !isText(value.id) ||
+    !isText(value.title) ||
+    !isDate(value.date) ||
+    typeof value.done !== 'boolean'
+  ) {
+    return null;
+  }
+  return {
+    id: value.id,
+    title: value.title.trim(),
+    date: value.date,
+    done: value.done,
+  };
+}
+
+function parsePrintItem(value: unknown): PrintItem | null {
+  if (
+    !isRecord(value) ||
+    !isText(value.id) ||
+    !isText(value.title) ||
+    typeof value.url !== 'string' ||
+    !isValidUrl(value.url) ||
+    typeof value.printed !== 'boolean'
+  ) {
+    return null;
+  }
+  return {
+    id: value.id,
+    title: value.title.trim(),
+    url: value.url.trim(),
+    printed: value.printed,
+  };
+}
+
+// Lists added after the first release are optional so older data still loads.
+function parseOptionalList<T>(value: unknown, parseItem: (item: unknown) => T | null) {
+  return value === undefined ? [] : parseList(value, parseItem);
+}
+
 export function validateAppState(value: unknown): StateCheck {
   if (!isRecord(value)) return { ok: false, reason: 'shape' };
 
@@ -165,7 +217,17 @@ export function validateAppState(value: unknown): StateCheck {
   const routines = parseList(value.routines, parseRoutine);
   const oneOffs = parseList(value.oneOffs, parseOneOff);
   const shoppingItems = parseList(value.shoppingItems, parseShoppingItem);
-  if (!houses || houses.length === 0 || !routines || !oneOffs || !shoppingItems) {
+  const tasks = parseOptionalList(value.tasks, parseTask);
+  const printItems = parseOptionalList(value.printItems, parsePrintItem);
+  if (
+    !houses ||
+    houses.length === 0 ||
+    !routines ||
+    !oneOffs ||
+    !shoppingItems ||
+    !tasks ||
+    !printItems
+  ) {
     return { ok: false, reason: 'shape' };
   }
 
@@ -173,7 +235,10 @@ export function validateAppState(value: unknown): StateCheck {
   if (!shoppingItems.every((item) => houseIds.has(item.houseId))) {
     return { ok: false, reason: 'references' };
   }
-  return { ok: true, state: { houses, routines, oneOffs, shoppingItems } };
+  return {
+    ok: true,
+    state: { houses, routines, oneOffs, shoppingItems, tasks, printItems },
+  };
 }
 
 export function parseStoredState(raw: string | null) {

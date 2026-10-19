@@ -8,6 +8,8 @@ describe('createDefaultState', () => {
     expect(state.routines).toEqual([]);
     expect(state.oneOffs).toEqual([]);
     expect(state.shoppingItems).toEqual([]);
+    expect(state.tasks).toEqual([]);
+    expect(state.printItems).toEqual([]);
   });
 });
 
@@ -68,6 +70,31 @@ describe('validateAppState', () => {
         shoppingItems: [{ ...s.shoppingItems[0], bought: 'yes' }],
       }),
     ],
+    ['tasks not an array', (s) => ({ ...s, tasks: 'x' })],
+    [
+      'task with impossible date',
+      (s) => ({ ...s, tasks: [{ ...s.tasks[0], date: '2026-02-30' }] }),
+    ],
+    [
+      'task without done',
+      (s) => ({ ...s, tasks: [{ id: 't', title: 'x', date: '2026-10-06' }] }),
+    ],
+    [
+      'task with blank title',
+      (s) => ({ ...s, tasks: [{ ...s.tasks[0], title: ' ' }] }),
+    ],
+    ['printItems not an array', (s) => ({ ...s, printItems: {} })],
+    [
+      'print item with javascript url',
+      (s) => ({
+        ...s,
+        printItems: [{ ...s.printItems[0], url: 'javascript:alert(1)' }],
+      }),
+    ],
+    [
+      'print item printed not boolean',
+      (s) => ({ ...s, printItems: [{ ...s.printItems[0], printed: 1 }] }),
+    ],
   ];
 
   it.each(invalidShapes)('rejects %s', (_name, mutate) => {
@@ -75,6 +102,22 @@ describe('validateAppState', () => {
       ok: false,
       reason: 'shape',
     });
+  });
+
+  it('loads a state written before tasks and print items existed', () => {
+    const { tasks: _tasks, printItems: _printItems, ...old } = createSampleState();
+    const check = validateAppState(old);
+    expect(check.ok && check.state.tasks).toEqual([]);
+    expect(check.ok && check.state.printItems).toEqual([]);
+  });
+
+  it('trims task titles and print item urls', () => {
+    const sample = createSampleState();
+    sample.tasks[0].title = ' Ligar ';
+    sample.printItems[0].url = ' https://a.co ';
+    const check = validateAppState(sample);
+    expect(check.ok && check.state.tasks[0].title).toBe('Ligar');
+    expect(check.ok && check.state.printItems[0].url).toBe('https://a.co');
   });
 
   it('rejects an item that points to a missing house', () => {
@@ -98,6 +141,13 @@ describe('parseStoredState', () => {
       state: sample,
       wasInvalid: false,
     });
+  });
+
+  it('accepts stored JSON without the new lists', () => {
+    const { tasks: _tasks, printItems: _printItems, ...old } = createSampleState();
+    const loaded = parseStoredState(JSON.stringify(old));
+    expect(loaded.wasInvalid).toBe(false);
+    expect(loaded.state.tasks).toEqual([]);
   });
 
   it('flags text that is not JSON', () => {
