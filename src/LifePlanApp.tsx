@@ -11,6 +11,7 @@ import { ShoppingScreen } from './components/shopping/ShoppingScreen';
 import { WeekScreen } from './components/week/WeekScreen';
 import { useAppState } from './hooks/useAppState';
 import { useDeviceSetting } from './hooks/useDeviceSetting';
+import { useOnForeground } from './hooks/useOnForeground';
 import { useReminders } from './hooks/useReminders';
 import {
   DEFAULT_RETENTION_SETTINGS,
@@ -40,6 +41,7 @@ export function LifePlanApp() {
     normalizeRetentionSettings,
   );
   const hasPurged = useRef(false);
+  const hasRolledOver = useRef(false);
   const [activeTab, setActiveTab] = useState<AppTab>('week');
   const [fontsLoaded, fontError] = useFonts({ Fraunces_600SemiBold });
   // A font failure falls back to the system serif instead of holding the splash.
@@ -73,6 +75,18 @@ export function LifePlanApp() {
     hasPurged.current = true;
     store.purgeOldOneOffs(retention.value.keepDays);
   }, [store, retention.isLoaded, retention.loadFailed, retention.value.keepDays]);
+
+  // Like the cleanup, never after a failed read: the state is the empty default then.
+  useEffect(() => {
+    if (hasRolledOver.current || !store.isLoaded || store.loadFailed) return;
+    hasRolledOver.current = true;
+    store.rollOverTasks();
+  }, [store]);
+
+  // Moves unfinished tasks when the app stays in the background across midnight.
+  useOnForeground(() => {
+    if (store.isLoaded && !store.loadFailed) store.rollOverTasks();
+  });
 
   if (!isReady) return null;
 
