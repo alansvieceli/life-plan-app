@@ -4,6 +4,13 @@ import { buildReminders, type Reminder, type ReminderSettings } from './reminder
 
 const CHANNEL_ID = 'events';
 
+export async function ensureReminderChannel() {
+  await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
+    name: 'Eventos',
+    importance: Notifications.AndroidImportance.HIGH,
+  });
+}
+
 function toRequest(reminder: Reminder) {
   const { trigger } = reminder;
   const types = Notifications.SchedulableTriggerInputTypes;
@@ -33,10 +40,7 @@ async function run(
   await Notifications.cancelAllScheduledNotificationsAsync();
   if (!settings.enabled || !hasPermission) return;
 
-  await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-    name: 'Eventos',
-    importance: Notifications.AndroidImportance.HIGH,
-  });
+  await ensureReminderChannel();
   for (const reminder of buildReminders(state, settings, now)) {
     await Notifications.scheduleNotificationAsync(toRequest(reminder));
   }

@@ -1,6 +1,6 @@
 import { createDefaultState } from './appState';
 import { Notifications } from './notifications';
-import { syncReminders } from './syncReminders';
+import { ensureReminderChannel, syncReminders } from './syncReminders';
 
 const events: string[] = [];
 
@@ -31,6 +31,17 @@ beforeEach(() => {
   mocked.scheduleNotificationAsync.mockImplementation(async (request) => {
     events.push(`schedule:${request.content.title}`);
     return 'id';
+  });
+});
+
+describe('ensureReminderChannel', () => {
+  // Android 13+ only shows the permission prompt when a channel already exists.
+  it('creates the events channel with high importance', async () => {
+    await ensureReminderChannel();
+    expect(mocked.setNotificationChannelAsync).toHaveBeenCalledWith('events', {
+      name: 'Eventos',
+      importance: 4,
+    });
   });
 });
 

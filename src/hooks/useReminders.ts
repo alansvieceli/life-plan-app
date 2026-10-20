@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Notifications } from '../lib/notifications';
 import { DEFAULT_REMINDER_SETTINGS, normalizeReminderSettings } from '../lib/reminders';
+import { ensureReminderChannel } from '../lib/syncReminders';
 import { useDeviceSetting } from './useDeviceSetting';
 
 const STORAGE_KEY = '@life-plan-app/reminders/v1';
@@ -9,6 +10,8 @@ const STORAGE_KEY = '@life-plan-app/reminders/v1';
 async function checkPermission(shouldRequest: boolean) {
   let { status } = await Notifications.getPermissionsAsync();
   if (status === 'undetermined' && shouldRequest) {
+    // Android 13+ only shows the permission prompt once a notification channel exists.
+    await ensureReminderChannel();
     ({ status } = await Notifications.requestPermissionsAsync());
   }
   return status === 'granted';
