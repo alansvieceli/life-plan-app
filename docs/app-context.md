@@ -22,7 +22,7 @@ One-off activities and **done** tasks older than a configurable period are delet
 
 ## Reminders
 
-The app schedules local notifications (no backend) `minutesBefore` minutes before each event: routines repeat weekly on their weekdays, one-offs fire once. The lead time (5, 10, 15, 30 or 60 min; default 5) and an on/off switch (default on) live in `Manutenção` > `Lembretes`. The settings are device settings in AsyncStorage (`@life-plan-app/reminders/v1`), kept outside the state document and outside the backup. Every state or settings change cancels and reschedules all reminders. Reminders need a native Android build (`npm run android`); in Expo Go they are a no-op. The Android notification permission is requested at start and when the switch is turned on; without it nothing is scheduled and a hint is shown.
+The app schedules local notifications (no backend) `minutesBefore` minutes before each event: routines repeat weekly on their weekdays, one-offs fire once. The lead time (5, 10, 15, 30 or 60 min; default 5) and an on/off switch (default off) live in `Manutenção` > `Lembretes`. The settings are device settings in AsyncStorage (`@life-plan-app/reminders/v1`), kept outside the state document and outside the backup. Every state or settings change cancels and reschedules all reminders. Reminders need a native Android build (`npm run android`); in Expo Go they are a no-op. Reminders start off. The Android notification permission is requested only when the switch is turned on (if not granted yet); without it nothing is scheduled and a hint is shown.
 
 ## Planned Features
 

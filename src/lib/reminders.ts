@@ -7,7 +7,7 @@ export type ReminderSettings = { enabled: boolean; minutesBefore: number };
 export const REMINDER_MINUTES_OPTIONS = [5, 10, 15, 30, 60] as const;
 
 export const DEFAULT_REMINDER_SETTINGS: ReminderSettings = {
-  enabled: true,
+  enabled: false,
   minutesBefore: 5,
 };
 

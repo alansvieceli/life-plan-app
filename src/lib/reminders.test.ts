@@ -42,8 +42,8 @@ describe('normalizeReminderSettings', () => {
     });
   });
 
-  it('defaults to enabled with 5 minutes', () => {
-    expect(DEFAULT_REMINDER_SETTINGS).toEqual({ enabled: true, minutesBefore: 5 });
+  it('defaults to disabled with 5 minutes', () => {
+    expect(DEFAULT_REMINDER_SETTINGS).toEqual({ enabled: false, minutesBefore: 5 });
   });
 });
 
