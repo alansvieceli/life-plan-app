@@ -4,11 +4,23 @@ import { buildReminders, type Reminder, type ReminderSettings } from './reminder
 
 const CHANNEL_ID = 'events';
 
-export async function ensureReminderChannel() {
+async function ensureReminderChannel() {
   await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
     name: 'Eventos',
     importance: Notifications.AndroidImportance.HIGH,
   });
+}
+
+// Android reports "never asked" as denied with canAskAgain true (not undetermined),
+// so we ask whenever the user can still be asked.
+export async function checkNotificationPermission(shouldRequest: boolean) {
+  let response = await Notifications.getPermissionsAsync();
+  if (response.status !== 'granted' && response.canAskAgain && shouldRequest) {
+    // Android 13+ only shows the permission prompt once a notification channel exists.
+    await ensureReminderChannel();
+    response = await Notifications.requestPermissionsAsync();
+  }
+  return response.status === 'granted';
 }
 
 function toRequest(reminder: Reminder) {

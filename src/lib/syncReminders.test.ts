@@ -1,6 +1,6 @@
 import { createDefaultState } from './appState';
 import { Notifications } from './notifications';
-import { ensureReminderChannel, syncReminders } from './syncReminders';
+import { checkNotificationPermission, syncReminders } from './syncReminders';
 
 const events: string[] = [];
 
@@ -9,6 +9,8 @@ jest.mock('./notifications', () => ({
     cancelAllScheduledNotificationsAsync: jest.fn(),
     scheduleNotificationAsync: jest.fn(),
     setNotificationChannelAsync: jest.fn(),
+    getPermissionsAsync: jest.fn(),
+    requestPermissionsAsync: jest.fn(),
     AndroidImportance: { HIGH: 4 },
     SchedulableTriggerInputTypes: { DATE: 'date', WEEKLY: 'weekly' },
   },
@@ -34,14 +36,31 @@ beforeEach(() => {
   });
 });
 
-describe('ensureReminderChannel', () => {
-  // Android 13+ only shows the permission prompt when a channel already exists.
-  it('creates the events channel with high importance', async () => {
-    await ensureReminderChannel();
-    expect(mocked.setNotificationChannelAsync).toHaveBeenCalledWith('events', {
-      name: 'Eventos',
-      importance: 4,
-    });
+describe('checkNotificationPermission', () => {
+  const answer = (status: string, canAskAgain: boolean) =>
+    ({ status, canAskAgain }) as never;
+
+  // Android reports "never asked" as denied with canAskAgain true, not undetermined.
+  it('asks when Android reports denied but can still ask', async () => {
+    mocked.getPermissionsAsync.mockResolvedValue(answer('denied', true));
+    mocked.requestPermissionsAsync.mockResolvedValue(answer('granted', true));
+    expect(await checkNotificationPermission(true)).toBe(true);
+    expect(mocked.setNotificationChannelAsync).toHaveBeenCalled();
+    expect(mocked.requestPermissionsAsync).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not ask again after the user blocked it', async () => {
+    mocked.getPermissionsAsync.mockResolvedValue(answer('denied', false));
+    expect(await checkNotificationPermission(true)).toBe(false);
+    expect(mocked.requestPermissionsAsync).not.toHaveBeenCalled();
+  });
+
+  it('does not ask when reminders are off or already granted', async () => {
+    mocked.getPermissionsAsync.mockResolvedValue(answer('denied', true));
+    expect(await checkNotificationPermission(false)).toBe(false);
+    mocked.getPermissionsAsync.mockResolvedValue(answer('granted', true));
+    expect(await checkNotificationPermission(true)).toBe(true);
+    expect(mocked.requestPermissionsAsync).not.toHaveBeenCalled();
   });
 });
 
