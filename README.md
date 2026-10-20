@@ -31,6 +31,8 @@ npm run android
 
 `npm start` starts the Expo dev server only.
 
+
+
 ## Validation
 
 ```bash

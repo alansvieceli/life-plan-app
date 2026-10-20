@@ -1,5 +1,10 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "project": ["**/*.{js,jsx,ts,tsx}!", "!jest.setup.ts!", "!src/lib/stateFixtures.ts!"],
+  "project": [
+    "**/*.{js,jsx,ts,tsx}!",
+    "!jest.setup.ts!",
+    "!scripts/build-apk.js!",
+    "!src/lib/stateFixtures.ts!"
+  ],
   "ignoreDependencies": ["expo-updates"]
 }
