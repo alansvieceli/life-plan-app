@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { padTwoDigits } from '../../lib/formatters';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
@@ -42,6 +43,7 @@ function NumberInput({
       accessibilityLabel={label}
       keyboardType="number-pad"
       maxLength={2}
+      onBlur={() => onChange(padTwoDigits(value))}
       onChangeText={onChange}
       selectTextOnFocus
       style={styles.input}

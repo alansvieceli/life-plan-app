@@ -1,4 +1,9 @@
-import { formatDuration, formatTimeRange, timeToMinutes } from './formatters';
+import {
+  formatDuration,
+  formatTimeRange,
+  padTwoDigits,
+  timeToMinutes,
+} from './formatters';
 
 describe('formatDuration', () => {
   it.each([
@@ -26,5 +31,18 @@ describe('timeToMinutes', () => {
   it('converts HH:mm to minutes', () => {
     expect(timeToMinutes('08:30')).toBe(510);
     expect(timeToMinutes('00:00')).toBe(0);
+  });
+});
+
+describe('padTwoDigits', () => {
+  it('pads a single digit and keeps two digits as typed', () => {
+    expect(padTwoDigits('5')).toBe('05');
+    expect(padTwoDigits('0')).toBe('00');
+    expect(padTwoDigits('12')).toBe('12');
+  });
+
+  it('leaves a blank field blank', () => {
+    expect(padTwoDigits('')).toBe('');
+    expect(padTwoDigits('  ')).toBe('  ');
   });
 });

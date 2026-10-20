@@ -1,5 +1,10 @@
 const pad = (value: number) => String(value).padStart(2, '0');
 
+// For number fields: a typed "5" becomes "05"; a blank field stays blank.
+export function padTwoDigits(text: string) {
+  return text.trim() === '' ? text : text.trim().padStart(2, '0');
+}
+
 export function timeToMinutes(time: string) {
   const [hours, minutes] = time.split(':').map(Number);
   return hours * 60 + minutes;
