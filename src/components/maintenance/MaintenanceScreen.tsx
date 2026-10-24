@@ -4,7 +4,12 @@ import { ScrollView, StyleSheet } from 'react-native';
 import type { AppStore } from '../../hooks/useAppState';
 import type { DeviceSetting } from '../../hooks/useDeviceSetting';
 import type { RemindersStore } from '../../hooks/useReminders';
-import { backupFileName, createBackupText, parseBackupText } from '../../lib/backup';
+import {
+  backupFileName,
+  createBackupText,
+  parseBackupText,
+  type RestoreResult,
+} from '../../lib/backup';
 import type { RetentionSettings } from '../../lib/retention';
 import { pickBackupText, shareBackupFile } from '../../services/backupFiles';
 import { sha256 } from '../../services/sha256';
@@ -50,26 +55,31 @@ export function MaintenanceScreen({
     }
   }
 
+  // Confirm before opening the picker: an alert raised right after returning from the
+  // picker activity can be dropped by Android, leaving the restore hanging silently.
   async function handleRestore() {
+    const confirmed = await confirmAction(
+      'Restaurar backup',
+      'Os dados atuais serão substituídos pelo backup escolhido.',
+      'Escolher arquivo',
+    );
+    if (!confirmed) return;
+    setStatus(null);
+    let result: RestoreResult;
     try {
       const text = await pickBackupText();
       if (text === null) return;
-      const result = await parseBackupText(text, sha256);
-      if (!result.ok) {
-        setStatus({ kind: 'error', text: result.error });
-        return;
-      }
-      const confirmed = await confirmAction(
-        'Restaurar backup',
-        'Os dados atuais serão substituídos.',
-        'Restaurar',
-      );
-      if (!confirmed) return;
-      store.replaceState(result.state);
-      setStatus({ kind: 'success', text: 'Backup restaurado.' });
+      result = await parseBackupText(text, sha256);
     } catch {
       setStatus({ kind: 'error', text: 'Não foi possível ler o arquivo.' });
+      return;
     }
+    if (!result.ok) {
+      setStatus({ kind: 'error', text: result.error });
+      return;
+    }
+    store.replaceState(result.state);
+    setStatus({ kind: 'success', text: result.message });
   }
 
   async function handleReset() {

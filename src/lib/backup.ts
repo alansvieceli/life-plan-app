@@ -8,7 +8,7 @@ const HASH_ALGORITHM = 'SHA-256';
 export type Sha256 = (text: string) => Promise<string>;
 
 export type RestoreResult =
-  | { ok: true; state: AppState }
+  | { ok: true; state: AppState; message: string }
   | { ok: false; error: string };
 
 const errors = {
@@ -18,6 +18,15 @@ const errors = {
   tampered: 'Backup inválido: o conteúdo foi alterado ou está corrompido.',
   references: 'Backup inválido: há itens ligados a casas que não existem.',
 } as const;
+
+const pad = (value: number) => String(value).padStart(2, '0');
+
+function restoredMessage(exportedAt: unknown) {
+  const date = typeof exportedAt === 'string' ? new Date(exportedAt) : null;
+  if (!date || Number.isNaN(date.getTime())) return 'Backup restaurado.';
+  const day = `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+  return `Backup de ${day} restaurado.`;
+}
 
 function fail(error: string): RestoreResult {
   return { ok: false, error };
@@ -82,11 +91,10 @@ export async function parseBackupText(
   if (!check.ok) {
     return fail(check.reason === 'references' ? errors.references : errors.invalidFile);
   }
-  return { ok: true, state: check.state };
+  return { ok: true, state: check.state, message: restoredMessage(parsed.exportedAt) };
 }
 
 export function backupFileName(date: Date) {
-  const pad = (value: number) => String(value).padStart(2, '0');
   const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
   return `life-plan-backup-${day}.lpb`;
 }

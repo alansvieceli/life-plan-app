@@ -43,7 +43,7 @@ Runs Biome, TypeScript, Jest with coverage, and Knip. Related commands: `npm run
 
 ## Local data
 
-All data lives on the device in one JSON document (AsyncStorage key `@life-plan-app/state/v1`). `Manutenção` > `Dados` exports a `life-plan-backup-AAAA-MM-DD.lpb` file (JSON with a SHA-256 integrity hash), restores one after validating it (altered or malformed files are rejected and current data is kept), and resets to two empty houses. The hash detects accidental or casual edits only; it is not tamper-proof. If saved data cannot be read, the app keeps it untouched and does not overwrite it.
+All data lives on the device in one JSON document (AsyncStorage key `@life-plan-app/state/v1`). `Manutenção` > `Dados` exports a `life-plan-backup-AAAA-MM-DD.lpb` file (JSON with a SHA-256 integrity hash), restores one after a confirmation asked before the file is chosen and after validating it (altered or malformed files are rejected and current data is kept; the result, with the backup date on success, is shown below the buttons), and resets to two empty houses. The hash detects accidental or casual edits only; it is not tamper-proof. If saved data cannot be read, the app keeps it untouched and does not overwrite it.
 
 ## Commits
 

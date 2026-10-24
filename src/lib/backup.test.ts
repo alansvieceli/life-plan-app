@@ -22,7 +22,30 @@ async function sampleBackup() {
 describe('backup round trip', () => {
   it('restores exactly what was exported', async () => {
     const result = await parseBackupText(await sampleBackup(), sha256);
-    expect(result).toEqual({ ok: true, state: createSampleState() });
+    expect(result).toEqual({
+      ok: true,
+      state: createSampleState(),
+      message: 'Backup de 01/10/2026 restaurado.',
+    });
+  });
+
+  it('names the local backup date in the success message', async () => {
+    const at = new Date(2026, 9, 22, 23, 30);
+    const result = await parseBackupText(
+      await createBackupText(createSampleState(), at, sha256),
+      sha256,
+    );
+    expect(result.ok && result.message).toBe('Backup de 22/10/2026 restaurado.');
+  });
+
+  it('uses a plain success message when the backup date is unreadable', async () => {
+    const constantHash: Sha256 = async () => 'fixed';
+    const envelope = JSON.parse(
+      await createBackupText(createSampleState(), exportedAt, constantHash),
+    );
+    envelope.exportedAt = 'ontem';
+    const result = await parseBackupText(JSON.stringify(envelope), constantHash);
+    expect(result.ok && result.message).toBe('Backup restaurado.');
   });
 
   it('writes the documented envelope', async () => {
@@ -46,6 +69,7 @@ describe('backup with tasks and print items', () => {
     expect(result).toEqual({
       ok: true,
       state: { ...old, tasks: [], printItems: [] },
+      message: 'Backup de 01/10/2026 restaurado.',
     });
   });
 
